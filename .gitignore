@@ -27,6 +27,10 @@ share/python-wheels/
 
 # Virtual environments
 .venv/
+.python/
+.uv-cache/
+.edgar/
+.runtime/
 venv/
 ENV/
 env/
@@ -42,6 +46,7 @@ htmlcov/
 eval_results.json
 
 # IDEs and editors
+ELIP PROJECT VAULT/.obsidian/
 .vscode/
 .idea/
 *.swp

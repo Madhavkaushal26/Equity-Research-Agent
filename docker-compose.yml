@@ -1,10 +1,33 @@
 services:
+  api:
+    build: .
+    restart: unless-stopped
+    init: true
+    ports:
+      - "${PORT:-8000}:${PORT:-8000}"
+    environment:
+      DATABASE_URL: postgresql+asyncpg://postgres:postgres@db:5432/equity_agent
+      GEMINI_API_KEY: ${GEMINI_API_KEY:?Set GEMINI_API_KEY in .env}
+      GEMINI_MODEL: ${GEMINI_MODEL:-gemini-2.5-flash}
+      EMBEDDING_MODEL: ${EMBEDDING_MODEL:-gemini-embedding-001}
+      EDGAR_IDENTITY: ${EDGAR_IDENTITY:?Set EDGAR_IDENTITY in .env}
+      EDGAR_USE_LOCAL_DATA: ${EDGAR_USE_LOCAL_DATA:-False}
+      PORT: ${PORT:-8000}
+    depends_on:
+      db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "-c", "import os, urllib.request; urllib.request.urlopen('http://127.0.0.1:' + os.environ.get('PORT', '8000') + '/health', timeout=5)"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
   db:
     image: pgvector/pgvector:pg16
     container_name: equity_agent_db
     restart: unless-stopped
     ports:
-      - "5432:5432"
+      - "127.0.0.1:5432:5432"
     environment:
       POSTGRES_DB: equity_agent
       POSTGRES_USER: postgres

@@ -1,0 +1,13 @@
+.git
+.env
+.env.*
+.venv
+.python
+.uv-cache
+.edgar
+.runtime
+__pycache__
+**/__pycache__
+*.pyc
+eval_results.json
+tests
